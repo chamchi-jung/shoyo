@@ -29,8 +29,9 @@ export function StudioAccountPanel({ onLoadProfile, onSaveProfile, onStatus, onU
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [session, setSession] = useState<Session | null>(null);
-  const initializedUserIdRef = useRef("");
   const [isBusy, setIsBusy] = useState(false);
+  const [accountMessage, setAccountMessage] = useState("");
+  const initializedUserIdRef = useRef("");
 
   useEffect(() => {
     if (!supabase) {
@@ -66,7 +67,8 @@ export function StudioAccountPanel({ onLoadProfile, onSaveProfile, onStatus, onU
       .then((savedProfile) => {
         if (savedProfile) {
           onLoadProfile(savedProfile);
-          onStatus("저장된 내 공개 프로필을 불러왔습니다.");
+          setAccountMessage("저장된 공개 프로필을 불러왔습니다.");
+          onStatus("저장된 공개 프로필을 불러왔습니다.");
           return;
         }
 
@@ -81,6 +83,8 @@ export function StudioAccountPanel({ onLoadProfile, onSaveProfile, onStatus, onU
             draft.statusLine = "지금 막 shoyo 방을 만드는 중";
           }
         });
+
+        setAccountMessage("첫 프로필을 시작했습니다. 주소와 닉네임을 확인한 뒤 공개 저장해 주세요.");
         onStatus("첫 프로필을 시작했습니다. 주소와 닉네임을 확인한 뒤 공개 저장해 주세요.");
       })
       .catch(() => {
@@ -95,13 +99,19 @@ export function StudioAccountPanel({ onLoadProfile, onSaveProfile, onStatus, onU
       });
   }, [onLoadProfile, onStatus, onUpdateProfile, session]);
 
+  function reportStatus(message: string) {
+    setAccountMessage(message);
+    onStatus(message);
+  }
+
   async function runAuthAction(action: () => Promise<void>) {
     setIsBusy(true);
+    setAccountMessage("");
 
     try {
       await action();
     } catch (error) {
-      onStatus(error instanceof Error ? error.message : "계정 작업 중 오류가 났습니다.");
+      reportStatus(error instanceof Error ? error.message : "계정 작업 중 오류가 났습니다.");
     } finally {
       setIsBusy(false);
     }
@@ -119,7 +129,7 @@ export function StudioAccountPanel({ onLoadProfile, onSaveProfile, onStatus, onU
         throw error;
       }
 
-      onStatus("가입 요청이 완료됐습니다. Supabase 설정에 따라 메일 확인 후 로그인해 주세요.");
+      reportStatus("가입 요청이 완료됐습니다. Supabase 설정에 따라 메일 확인 후 로그인해 주세요.");
     });
   }
 
@@ -135,7 +145,7 @@ export function StudioAccountPanel({ onLoadProfile, onSaveProfile, onStatus, onU
         throw new Error(getSignInErrorMessage(error));
       }
 
-      onStatus("로그인했습니다.");
+      reportStatus("로그인했습니다.");
     });
   }
 
@@ -151,7 +161,9 @@ export function StudioAccountPanel({ onLoadProfile, onSaveProfile, onStatus, onU
         throw error;
       }
 
-      onStatus("로그아웃했습니다.");
+      initializedUserIdRef.current = "";
+      setSession(null);
+      reportStatus("로그아웃했습니다.");
     });
   }
 
@@ -160,12 +172,12 @@ export function StudioAccountPanel({ onLoadProfile, onSaveProfile, onStatus, onU
       const savedProfile = await loadMyPublishedProfile();
 
       if (!savedProfile) {
-        onStatus("아직 공개 저장된 프로필이 없습니다.");
+        reportStatus("아직 공개 저장된 프로필이 없습니다.");
         return;
       }
 
       onLoadProfile(savedProfile);
-      onStatus("공개 프로필을 불러왔습니다.");
+      reportStatus("공개 프로필을 불러왔습니다.");
     });
   }
 
@@ -174,7 +186,7 @@ export function StudioAccountPanel({ onLoadProfile, onSaveProfile, onStatus, onU
       const savedProfile = await saveMyPublishedProfile(profile);
 
       onSaveProfile(savedProfile);
-      onStatus(`공개 프로필을 저장했습니다. /profile/${savedProfile.username}`);
+      reportStatus(`공개 프로필을 저장했습니다. /profile/${savedProfile.username}`);
     });
   }
 
@@ -209,7 +221,7 @@ export function StudioAccountPanel({ onLoadProfile, onSaveProfile, onStatus, onU
       <div className="studio-account-header">
         <div>
           <p className="studio-eyebrow">계정</p>
-          <h2>{session ? "공개 프로필 저장" : "가입해서 프로필 만들기"}</h2>
+          <h2>{session ? "공개 프로필 저장" : "가입하고 프로필 만들기"}</h2>
         </div>
         {session ? (
           <button className="studio-mini-button" disabled={isBusy} onClick={signOut} type="button">
@@ -223,7 +235,7 @@ export function StudioAccountPanel({ onLoadProfile, onSaveProfile, onStatus, onU
           <p className="studio-account-copy">{session.user.email} 계정으로 로그인 중입니다.</p>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="studio-field">
-              <span>내 주소</span>
+              <span>주소</span>
               <input onChange={(event) => updateUsername(event.target.value)} value={profile.username} />
               <small className="studio-file-note">/profile/{profile.username}</small>
             </label>
@@ -268,7 +280,7 @@ export function StudioAccountPanel({ onLoadProfile, onSaveProfile, onStatus, onU
             </button>
             <button
               className="studio-button secondary"
-              disabled={isBusy || !email || password.length < 6}
+              disabled={isBusy || !email || !password}
               onClick={signIn}
               type="button"
             >
@@ -277,6 +289,12 @@ export function StudioAccountPanel({ onLoadProfile, onSaveProfile, onStatus, onU
           </div>
         </div>
       )}
+
+      {accountMessage ? (
+        <p className="studio-account-message" role="status">
+          {accountMessage}
+        </p>
+      ) : null}
     </section>
   );
 }

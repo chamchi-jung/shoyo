@@ -2840,6 +2840,13 @@ select {
     font-size: 0.9rem;
   }
 
+  .studio-account-panel .studio-account-message {
+    border: 1px solid rgba(223, 185, 94, 0.46);
+    background: rgba(223, 185, 94, 0.12);
+    color: #fff8e4;
+    padding: 0.62rem 0.7rem;
+  }
+
   .studio-builder-copy h2 {
     margin: 0.25rem 0 0;
     color: #fff8e4;

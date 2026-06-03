@@ -596,7 +596,7 @@ export function CommunityBoard() {
             />
           </label>
           <div className="dc-login-actions">
-            <button disabled={isAuthBusy || !supabase || !authEmail || authPassword.length < 6} onClick={signIn} type="button">
+            <button disabled={isAuthBusy || !supabase || !authEmail || !authPassword} onClick={signIn} type="button">
               로그인
             </button>
             <button disabled={isAuthBusy || !supabase || !authEmail || authPassword.length < 6} onClick={signUp} type="button">
