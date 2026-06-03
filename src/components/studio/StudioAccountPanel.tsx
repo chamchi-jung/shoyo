@@ -3,6 +3,7 @@
 import type { Session } from "@supabase/supabase-js";
 import { useEffect, useRef, useState } from "react";
 import { sampleProfiles, type Profile } from "@/data/sampleProfiles";
+import { getSignInErrorMessage } from "@/lib/authMessages";
 import { loadMyPublishedProfile, normalizeUsername, saveMyPublishedProfile } from "@/lib/profilePersistence";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 
@@ -131,7 +132,7 @@ export function StudioAccountPanel({ onLoadProfile, onSaveProfile, onStatus, onU
       const { error } = await supabase.auth.signInWithPassword({ email, password });
 
       if (error) {
-        throw error;
+        throw new Error(getSignInErrorMessage(error));
       }
 
       onStatus("로그인했습니다.");

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import type { CommunityCategory, CommunityPost, CommunityReply } from "@/data/community";
 import { communityCategories, sampleCommunityPosts } from "@/data/community";
+import { getSignInErrorMessage } from "@/lib/authMessages";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 
 const localPostsKey = "shoyo:community-member-posts";
@@ -369,7 +370,7 @@ export function CommunityBoard() {
       const { error } = await supabase!.auth.signInWithPassword({ email: authEmail, password: authPassword });
 
       if (error) {
-        throw error;
+        throw new Error(getSignInErrorMessage(error));
       }
 
       setAuthMessage("로그인했습니다. 이제 글과 댓글을 쓸 수 있습니다.");
