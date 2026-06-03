@@ -9,6 +9,9 @@ type ProfilePageProps = {
   params: Promise<{
     username: string;
   }>;
+  searchParams?: Promise<{
+    preview?: string;
+  }>;
 };
 
 export function generateStaticParams() {
@@ -33,8 +36,9 @@ export async function generateMetadata({ params }: ProfilePageProps): Promise<Me
   };
 }
 
-export default async function ProfilePage({ params }: ProfilePageProps) {
+export default async function ProfilePage({ params, searchParams }: ProfilePageProps) {
   const { username } = await params;
+  const { preview } = (await searchParams) ?? {};
   const profile = await getPublishedProfileByUsername(username);
   const fallbackProfile = {
     ...sampleProfiles[0],
@@ -46,5 +50,5 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   };
   const profiles = await getPublishedProfiles();
 
-  return <ProfilePageClient initialProfile={profile ?? fallbackProfile} profiles={profiles} />;
+  return <ProfilePageClient allowLocalDraftPreview={preview === "draft"} initialProfile={profile ?? fallbackProfile} profiles={profiles} />;
 }

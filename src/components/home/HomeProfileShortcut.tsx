@@ -13,6 +13,18 @@ export function HomeProfileShortcut() {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(Boolean(supabase));
 
+  function signOut() {
+    if (!supabase) {
+      return;
+    }
+
+    void supabase.auth.signOut().then(() => {
+      setSession(null);
+      setProfile(null);
+      setIsLoading(false);
+    });
+  }
+
   useEffect(() => {
     if (!supabase) {
       return;
@@ -99,11 +111,16 @@ export function HomeProfileShortcut() {
         <div>
           <p className="landing-eyebrow">내 프로필</p>
           <strong>아직 공개 저장된 프로필이 없습니다.</strong>
-          <span>스튜디오에서 프로필을 만든 뒤 공개 저장하면 홈에 표시됩니다.</span>
+          <span>{session.user.email} 계정으로 로그인 중입니다.</span>
         </div>
-        <Link className="landing-my-profile-link" href="/studio/profile">
-          공개 프로필 만들기
-        </Link>
+        <div className="landing-my-profile-actions">
+          <Link className="landing-my-profile-link" href="/studio/profile">
+            공개 프로필 만들기
+          </Link>
+          <button className="landing-my-profile-link secondary" onClick={signOut} type="button">
+            로그아웃
+          </button>
+        </div>
       </div>
     );
   }
@@ -115,7 +132,7 @@ export function HomeProfileShortcut() {
         <div>
           <p className="landing-eyebrow">내 공개 프로필</p>
           <strong>{profile.nickname}</strong>
-          <span>@{profile.username}</span>
+          <span>@{profile.username} / {session.user.email}</span>
         </div>
       </div>
       <div className="landing-my-profile-actions">
@@ -125,6 +142,9 @@ export function HomeProfileShortcut() {
         <Link className="landing-my-profile-link secondary" href="/studio/profile">
           계속 편집
         </Link>
+        <button className="landing-my-profile-link secondary" onClick={signOut} type="button">
+          로그아웃
+        </button>
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import { ProfileShell } from "./ProfileShell";
 const STORAGE_KEY = "shoyo:studio-profile";
 
 type ProfilePageClientProps = {
+  allowLocalDraftPreview?: boolean;
   initialProfile: Profile;
   profiles: Profile[];
 };
@@ -24,10 +25,14 @@ function isProfile(value: unknown): value is Profile {
   );
 }
 
-export function ProfilePageClient({ initialProfile, profiles }: ProfilePageClientProps) {
+export function ProfilePageClient({ allowLocalDraftPreview = false, initialProfile, profiles }: ProfilePageClientProps) {
   const [profile, setProfile] = useState(initialProfile);
 
   useEffect(() => {
+    if (!allowLocalDraftPreview) {
+      return undefined;
+    }
+
     const handle = window.setTimeout(() => {
       const savedProfile = window.localStorage.getItem(STORAGE_KEY);
 
@@ -47,7 +52,7 @@ export function ProfilePageClient({ initialProfile, profiles }: ProfilePageClien
     }, 0);
 
     return () => window.clearTimeout(handle);
-  }, [initialProfile]);
+  }, [allowLocalDraftPreview, initialProfile]);
 
   return <ProfileShell profile={profile} profiles={profiles} />;
 }

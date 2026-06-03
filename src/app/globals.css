@@ -203,6 +203,7 @@ select {
     border: 1px solid #fff8e4;
     background: #dfb95e;
     color: #201a18;
+    cursor: pointer;
     padding: 0.62rem 0.75rem;
     font-family:
       ui-monospace,
@@ -218,6 +219,10 @@ select {
     text-decoration: none;
     text-transform: uppercase;
     white-space: nowrap;
+  }
+
+  button.landing-my-profile-link {
+    appearance: none;
   }
 
   .landing-my-profile-link.secondary {

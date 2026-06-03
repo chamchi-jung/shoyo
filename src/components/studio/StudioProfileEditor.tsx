@@ -297,7 +297,7 @@ export function StudioProfileEditor() {
             <button className="studio-button" onClick={saveLocalDraft} type="button">
               초안 저장
             </button>
-            <a className="studio-button secondary" href={`/profile/${profile.username}`} onClick={saveBeforePreview}>
+            <a className="studio-button secondary" href={`/profile/${profile.username}?preview=draft`} onClick={saveBeforePreview}>
               페이지 미리보기
             </a>
             <button className="studio-button secondary" onClick={clearLocalDraft} type="button">
@@ -668,7 +668,7 @@ export function StudioProfileEditor() {
             <span />
             <span />
           </div>
-          <a href={`/profile/${profile.username}`} onClick={saveBeforePreview}>
+          <a href={`/profile/${profile.username}?preview=draft`} onClick={saveBeforePreview}>
             페이지 미리보기
           </a>
         </div>
