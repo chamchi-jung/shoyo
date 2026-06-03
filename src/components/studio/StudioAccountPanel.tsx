@@ -142,7 +142,9 @@ export function StudioAccountPanel({ onLoadProfile, onSaveProfile, onStatus, onU
       const { error } = await supabase.auth.signInWithPassword({ email, password });
 
       if (error) {
-        throw new Error(getSignInErrorMessage(error));
+        const message = getSignInErrorMessage(error);
+        window.alert(message);
+        throw new Error(message);
       }
 
       reportStatus("로그인했습니다.");

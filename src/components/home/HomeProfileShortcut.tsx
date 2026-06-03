@@ -94,13 +94,18 @@ export function HomeProfileShortcut() {
     return (
       <div className="landing-my-profile" data-has-profile="false">
         <div>
-          <p className="landing-eyebrow">내 프로필</p>
-          <strong>로그인하면 내 공개 프로필이 보입니다.</strong>
-          <span>로컬 초안은 스튜디오 안에만 남겨두고, 홈에서는 계정 상태만 보여줍니다.</span>
+          <p className="landing-eyebrow">계정 상태</p>
+          <strong>로그아웃 상태입니다.</strong>
+          <span>로그인하면 여기에 내 공개 프로필과 로그아웃 버튼이 표시됩니다.</span>
         </div>
-        <Link className="landing-my-profile-link" href="/studio/profile">
-          로그인 / 만들기
-        </Link>
+        <div className="landing-my-profile-actions">
+          <Link className="landing-my-profile-link" href="/studio/profile">
+            로그인하기
+          </Link>
+          <Link className="landing-my-profile-link secondary" href="/studio/profile">
+            프로필 만들기
+          </Link>
+        </div>
       </div>
     );
   }
@@ -109,7 +114,7 @@ export function HomeProfileShortcut() {
     return (
       <div className="landing-my-profile" data-has-profile="false">
         <div>
-          <p className="landing-eyebrow">내 프로필</p>
+          <p className="landing-eyebrow">계정 상태</p>
           <strong>아직 공개 저장된 프로필이 없습니다.</strong>
           <span>{session.user.email} 계정으로 로그인 중입니다.</span>
         </div>
@@ -130,7 +135,7 @@ export function HomeProfileShortcut() {
       <div className="landing-my-profile-owner">
         <span aria-hidden="true" className="landing-my-profile-avatar" style={{ backgroundImage: `url("${profile.avatarUrl}")` }} />
         <div>
-          <p className="landing-eyebrow">내 공개 프로필</p>
+          <p className="landing-eyebrow">계정 상태</p>
           <strong>{profile.nickname}</strong>
           <span>@{profile.username} / {session.user.email}</span>
         </div>

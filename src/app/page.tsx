@@ -54,8 +54,8 @@ export default function Home() {
           <div className="landing-preview-profile">
             <span aria-hidden="true" className="landing-preview-avatar" />
             <div>
-              <p className="landing-eyebrow">내 방 미리보기</p>
-              <strong>스튜디오에서 저장한 프로필</strong>
+              <p className="landing-eyebrow">샘플 방 미리보기</p>
+              <strong>{featuredProfile.nickname}의 샘플 프로필</strong>
             </div>
           </div>
           <div className="landing-preview-stack">

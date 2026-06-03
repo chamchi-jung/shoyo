@@ -370,7 +370,9 @@ export function CommunityBoard() {
       const { error } = await supabase!.auth.signInWithPassword({ email: authEmail, password: authPassword });
 
       if (error) {
-        throw new Error(getSignInErrorMessage(error));
+        const message = getSignInErrorMessage(error);
+        window.alert(message);
+        throw new Error(message);
       }
 
       setAuthMessage("로그인했습니다. 이제 글과 댓글을 쓸 수 있습니다.");
