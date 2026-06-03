@@ -1,0 +1,23 @@
+<svg width="1200" height="780" viewBox="0 0 1200 780" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="780" fill="#202832"/>
+  <rect x="70" y="74" width="1060" height="632" fill="#2f3640" stroke="#15191f" stroke-width="8"/>
+  <rect x="119" y="130" width="470" height="300" fill="#1f3246"/>
+  <circle cx="492" cy="194" r="58" fill="#f0c573"/>
+  <path d="M128 373C224 324 310 330 386 373C456 413 517 401 580 373V430H128V373Z" fill="#375d69"/>
+  <rect x="648" y="130" width="360" height="38" fill="#7c3f35"/>
+  <rect x="648" y="187" width="310" height="38" fill="#f3ead2"/>
+  <rect x="648" y="244" width="395" height="38" fill="#b7a37a"/>
+  <rect x="642" y="345" width="360" height="170" fill="#f3ead2" stroke="#1c1714" stroke-width="6"/>
+  <circle cx="722" cy="430" r="54" fill="#253348" stroke="#1c1714" stroke-width="7"/>
+  <circle cx="722" cy="430" r="17" fill="#f3ead2"/>
+  <rect x="810" y="390" width="150" height="28" fill="#7c3f35"/>
+  <rect x="810" y="438" width="112" height="28" fill="#665f56"/>
+  <rect x="130" y="560" width="900" height="58" fill="#15191f"/>
+  <rect x="178" y="489" width="180" height="92" fill="#d7bd78" stroke="#15191f" stroke-width="6"/>
+  <rect x="386" y="500" width="72" height="80" fill="#7c3f35"/>
+  <rect x="474" y="470" width="72" height="110" fill="#f3ead2"/>
+  <rect x="562" y="520" width="72" height="60" fill="#36556a"/>
+  <path d="M826 514L881 340L936 514H826Z" fill="#f0c573" opacity="0.88"/>
+  <rect x="858" y="514" width="46" height="66" fill="#665f56"/>
+  <text x="119" y="668" fill="#f3ead2" font-family="Georgia, serif" font-size="44" font-weight="700">MIDNIGHT ROOM</text>
+</svg>

@@ -1,0 +1,12 @@
+<svg width="1200" height="780" viewBox="0 0 1200 780" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="780" fill="#f4cfdf"/>
+  <circle cx="980" cy="130" r="130" fill="#fff8dc"/>
+  <rect x="86" y="108" width="1028" height="556" rx="32" fill="#fff8dc" stroke="#53364f" stroke-width="8"/>
+  <rect x="146" y="180" width="290" height="210" rx="20" fill="#8fb7a0" stroke="#53364f" stroke-width="7"/>
+  <rect x="486" y="180" width="250" height="88" rx="18" fill="#e2779b" stroke="#53364f" stroke-width="7"/>
+  <rect x="486" y="300" width="360" height="90" rx="18" fill="#f4b95f" stroke="#53364f" stroke-width="7"/>
+  <rect x="146" y="458" width="390" height="66" rx="22" fill="#53364f"/>
+  <rect x="572" y="458" width="250" height="66" rx="22" fill="#8fb7a0" stroke="#53364f" stroke-width="7"/>
+  <circle cx="938" cy="304" r="72" fill="#e2779b" stroke="#53364f" stroke-width="8"/>
+  <text x="132" y="618" fill="#53364f" font-family="Arial, sans-serif" font-size="52" font-weight="800">PASTEL DESK</text>
+</svg>

@@ -1,0 +1,22 @@
+<svg width="1200" height="780" viewBox="0 0 1200 780" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="780" fill="#cfc8b7"/>
+  <rect x="76" y="72" width="1048" height="636" fill="#fff8e4" stroke="#171512" stroke-width="8"/>
+  <path d="M100 158L432 118L465 365L133 405L100 158Z" fill="#255f5b" stroke="#171512" stroke-width="6"/>
+  <path d="M494 108L765 160L710 444L439 392L494 108Z" fill="#f2d65c" stroke="#171512" stroke-width="6"/>
+  <path d="M790 135L1054 104L1097 468L833 499L790 135Z" fill="#d15642" stroke="#171512" stroke-width="6"/>
+  <rect x="162" y="213" width="226" height="26" fill="#171512"/>
+  <rect x="163" y="267" width="174" height="22" fill="#fff8e4"/>
+  <rect x="529" y="216" width="154" height="24" fill="#171512"/>
+  <rect x="513" y="272" width="185" height="22" fill="#171512"/>
+  <rect x="858" y="198" width="156" height="26" fill="#fff8e4"/>
+  <rect x="861" y="263" width="190" height="24" fill="#171512"/>
+  <path d="M114 509H1085V629H114V509Z" fill="#171512"/>
+  <rect x="152" y="542" width="205" height="28" fill="#fff8e4"/>
+  <rect x="404" y="542" width="172" height="28" fill="#fff8e4"/>
+  <rect x="622" y="542" width="236" height="28" fill="#fff8e4"/>
+  <rect x="904" y="542" width="122" height="28" fill="#fff8e4"/>
+  <path d="M142 93L241 84L248 127L149 136L142 93Z" fill="#f0ead6" stroke="#171512" stroke-width="5"/>
+  <path d="M776 84L879 73L887 117L784 128L776 84Z" fill="#f0ead6" stroke="#171512" stroke-width="5"/>
+  <path d="M522 430L621 441L615 486L516 475L522 430Z" fill="#f0ead6" stroke="#171512" stroke-width="5"/>
+  <text x="122" y="682" fill="#171512" font-family="Courier New, monospace" font-size="46" font-weight="700">PHOTOCOPY ZINE WALL</text>
+</svg>
