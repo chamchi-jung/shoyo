@@ -37,6 +37,14 @@ function cloneProfile(profile: Profile) {
   return JSON.parse(JSON.stringify(profile)) as Profile;
 }
 
+function cloneProfileBlock(block: ProfileBlock): ProfileBlock {
+  return {
+    ...JSON.parse(JSON.stringify(block)),
+    id: `draft-${block.type}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
+    title: `${block.title ?? "블록"} 복사본`
+  } as ProfileBlock;
+}
+
 function isProfile(value: unknown): value is Profile {
   const candidate = value as Partial<Profile>;
   return Boolean(
@@ -254,6 +262,30 @@ export function StudioProfileEditor() {
       draft.blocks[index] = block;
     });
     setSelectedCanvasBlockId(block.id);
+  }
+
+  function duplicateCanvasBlock(index: number) {
+    const sourceBlock = profile.blocks[index];
+
+    if (!sourceBlock) {
+      return;
+    }
+
+    const nextBlock = cloneProfileBlock(sourceBlock);
+
+    updateProfile((draft) => {
+      draft.blocks.splice(index + 1, 0, nextBlock);
+    });
+    setSelectedCanvasBlockId(nextBlock.id);
+  }
+
+  function removeCanvasBlock(index: number) {
+    const fallbackBlock = profile.blocks[index + 1] ?? profile.blocks[index - 1];
+
+    updateProfile((draft) => {
+      draft.blocks = draft.blocks.filter((_, blockIndex) => blockIndex !== index);
+    });
+    setSelectedCanvasBlockId(fallbackBlock?.id ?? "");
   }
 
   function handleBackgroundFile(file: File | undefined) {
@@ -517,8 +549,8 @@ export function StudioProfileEditor() {
           </div>
         </section>
 
-        <EditorSection defaultOpen eyebrow="블록" title="블록 추가, 이동, 삭제">
-          <StudioBlockEditor onUpdate={updateProfile} profile={profile} />
+        <EditorSection defaultOpen eyebrow="블록 추가" title="새 블록 붙이기">
+          <StudioBlockEditor onBlockAdded={setSelectedCanvasBlockId} onUpdate={updateProfile} profile={profile} />
         </EditorSection>
 
         <EditorSection eyebrow="샘플" title="샘플 방 불러오기">
@@ -707,7 +739,9 @@ export function StudioProfileEditor() {
           <ProfileShell
             blockEditor={{
               selectedBlockId: selectedCanvasBlockId,
+              onDuplicateBlock: duplicateCanvasBlock,
               onMoveBlock: moveCanvasBlock,
+              onRemoveBlock: removeCanvasBlock,
               onSelectBlock: setSelectedCanvasBlockId,
               onUpdateBlock: updateCanvasBlock
             }}

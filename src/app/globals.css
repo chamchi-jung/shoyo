@@ -2376,6 +2376,10 @@ select {
     opacity: 0.42;
   }
 
+  .studio-inline-editor-head button[data-danger="true"] {
+    background: color-mix(in srgb, #d56042 82%, var(--profile-border));
+  }
+
   .studio-inline-fields {
     display: grid;
     gap: 0.65rem;
@@ -2414,6 +2418,15 @@ select {
   .studio-inline-fields textarea {
     min-height: 5.5rem;
     resize: vertical;
+  }
+
+  .studio-inline-fields input[type="file"] {
+    padding: 0.5rem;
+  }
+
+  .studio-inline-fields small {
+    color: var(--profile-muted);
+    font-size: 0.76rem;
   }
 
   .studio-inline-fields input:focus,

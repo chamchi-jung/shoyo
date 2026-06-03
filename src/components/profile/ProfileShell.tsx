@@ -9,7 +9,9 @@ import { ProfileShareCard } from "./ProfileShareCard";
 type ProfileShellProps = {
   blockEditor?: {
     selectedBlockId: string;
+    onDuplicateBlock: (index: number) => void;
     onMoveBlock: (fromIndex: number, toIndex: number) => void;
+    onRemoveBlock: (index: number) => void;
     onSelectBlock: (blockId: string) => void;
     onUpdateBlock: (index: number, block: ProfileBlock) => void;
   };
