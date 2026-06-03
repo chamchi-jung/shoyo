@@ -3,7 +3,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { ProfileShell } from "@/components/profile/ProfileShell";
-import type { Profile, ProfileCardStyle, ProfileLayout, ProfileLink, ProfilePreset } from "@/data/sampleProfiles";
+import type { Profile, ProfileBlock, ProfileCardStyle, ProfileLayout, ProfileLink, ProfilePreset } from "@/data/sampleProfiles";
 import { profilePresets, sampleProfiles } from "@/data/sampleProfiles";
 import { isLocalImageDataUrl, readImageFile } from "@/lib/localImage";
 import { StudioAccountPanel } from "./StudioAccountPanel";
@@ -104,6 +104,7 @@ export function StudioProfileEditor() {
   const [profile, setProfile] = useState(() => cloneProfile(sampleProfiles[0]));
   const [saveStatus, setSaveStatus] = useState("초안");
   const [importJson, setImportJson] = useState("");
+  const [selectedCanvasBlockId, setSelectedCanvasBlockId] = useState(sampleProfiles[0].blocks[0]?.id ?? "");
   const hasHydratedDraftRef = useRef(false);
   const lastSavedDraftRef = useRef("");
   const skipNextAutoSaveRef = useRef(false);
@@ -137,6 +138,7 @@ export function StudioProfileEditor() {
         if (isProfile(parsedProfile)) {
           lastSavedDraftRef.current = savedProfile;
           setProfile(parsedProfile);
+          setSelectedCanvasBlockId(parsedProfile.blocks[0]?.id ?? "");
           setSaveStatus("저장된 로컬 초안을 불러왔습니다");
           hasHydratedDraftRef.current = true;
           return;
@@ -187,6 +189,7 @@ export function StudioProfileEditor() {
 
   function replaceProfile(nextProfile: Profile) {
     setProfile(cloneProfile(nextProfile));
+    setSelectedCanvasBlockId(nextProfile.blocks[0]?.id ?? "");
   }
 
   function saveLocalDraft() {
@@ -202,6 +205,7 @@ export function StudioProfileEditor() {
     lastSavedDraftRef.current = "";
     skipNextAutoSaveRef.current = true;
     setProfile(cloneProfile(sampleProfiles[0]));
+    setSelectedCanvasBlockId(sampleProfiles[0].blocks[0]?.id ?? "");
     setSaveStatus("샘플로 초기화했습니다");
   }
 
@@ -213,6 +217,7 @@ export function StudioProfileEditor() {
     }
 
     setProfile(cloneProfile(nextProfile));
+    setSelectedCanvasBlockId(nextProfile.blocks[0]?.id ?? "");
     setSaveStatus("샘플 방을 불러왔습니다");
   }
 
@@ -223,7 +228,32 @@ export function StudioProfileEditor() {
       draft.theme = { ...preset.theme };
       draft.blocks = reorderBlocksByPreset(draft, preset.blockOrder);
     });
+    setSelectedCanvasBlockId(profile.blocks[0]?.id ?? "");
     setSaveStatus(`프리셋 적용: ${preset.label}`);
+  }
+
+  function moveCanvasBlock(fromIndex: number, insertIndex: number) {
+    if (fromIndex === insertIndex || fromIndex + 1 === insertIndex) {
+      return;
+    }
+
+    updateProfile((draft) => {
+      const [movingBlock] = draft.blocks.splice(fromIndex, 1);
+
+      if (!movingBlock) {
+        return;
+      }
+
+      const nextIndex = fromIndex < insertIndex ? insertIndex - 1 : insertIndex;
+      draft.blocks.splice(nextIndex, 0, movingBlock);
+    });
+  }
+
+  function updateCanvasBlock(index: number, block: ProfileBlock) {
+    updateProfile((draft) => {
+      draft.blocks[index] = block;
+    });
+    setSelectedCanvasBlockId(block.id);
   }
 
   function handleBackgroundFile(file: File | undefined) {
@@ -662,6 +692,7 @@ export function StudioProfileEditor() {
           <div>
             <p className="studio-eyebrow">실시간 미리보기</p>
             <h2>{profile.nickname}</h2>
+            <small>카드를 클릭하면 이 창 안에서 바로 편집할 수 있습니다.</small>
           </div>
           <div className="studio-window-dots" aria-hidden="true">
             <span />
@@ -673,7 +704,17 @@ export function StudioProfileEditor() {
           </a>
         </div>
         <div className="studio-preview-frame">
-          <ProfileShell preview profile={profile} profiles={sampleProfiles} />
+          <ProfileShell
+            blockEditor={{
+              selectedBlockId: selectedCanvasBlockId,
+              onMoveBlock: moveCanvasBlock,
+              onSelectBlock: setSelectedCanvasBlockId,
+              onUpdateBlock: updateCanvasBlock
+            }}
+            preview
+            profile={profile}
+            profiles={sampleProfiles}
+          />
         </div>
       </aside>
     </main>

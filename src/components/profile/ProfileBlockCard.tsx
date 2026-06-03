@@ -1,6 +1,6 @@
 "use client";
 
-import type { KeyboardEvent, MouseEvent } from "react";
+import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
 import type { MediaProfileBlock, ProfileBlock } from "@/data/sampleProfiles";
 import { profileBlockTypeLabels } from "@/data/sampleProfiles";
 import { YouTubeEmbed } from "./YouTubeEmbed";
@@ -8,8 +8,11 @@ import { YouTubeEmbed } from "./YouTubeEmbed";
 type ProfileBlockCardProps = {
   block: ProfileBlock;
   commentCount?: number;
+  editorControls?: ReactNode;
   index: number;
+  isEditing?: boolean;
   onCommentClick?: (blockId: string) => void;
+  onEditSelect?: (blockId: string) => void;
 };
 
 function BlockTags({ tags }: { tags?: string[] }) {
@@ -59,23 +62,72 @@ function getCardCommentProps(block: ProfileBlock, onCommentClick?: (blockId: str
   } as const;
 }
 
-function CommentCue({ count }: { count?: number }) {
+function getCardEditorProps(block: ProfileBlock, onEditSelect?: (blockId: string) => void) {
+  if (!onEditSelect) {
+    return {};
+  }
+
+  return {
+    "data-editable": "true",
+    onClick: (event: MouseEvent<HTMLElement>) => {
+      if (shouldIgnoreCardClick(event.target)) {
+        return;
+      }
+
+      onEditSelect(block.id);
+    },
+    onKeyDown: (event: KeyboardEvent<HTMLElement>) => {
+      if (shouldIgnoreCardClick(event.target) || (event.key !== "Enter" && event.key !== " ")) {
+        return;
+      }
+
+      event.preventDefault();
+      onEditSelect(block.id);
+    },
+    role: "button",
+    tabIndex: 0
+  } as const;
+}
+
+function getCardInteractionProps(block: ProfileBlock, onCommentClick?: (blockId: string) => void, onEditSelect?: (blockId: string) => void) {
+  if (onEditSelect) {
+    return getCardEditorProps(block, onEditSelect);
+  }
+
+  return getCardCommentProps(block, onCommentClick);
+}
+
+function CommentCue({ count, hidden = false }: { count?: number; hidden?: boolean }) {
+  if (hidden) {
+    return null;
+  }
+
   return <span className="profile-comment-cue">{count ? `댓글 ${count}개` : "댓글 남기기"}</span>;
 }
 
 function MediaBlockCard({
   block,
   commentCount,
+  editorControls,
   index,
-  onCommentClick
+  isEditing,
+  onCommentClick,
+  onEditSelect
 }: {
   block: MediaProfileBlock;
   commentCount?: number;
+  editorControls?: ReactNode;
   index: number;
+  isEditing?: boolean;
   onCommentClick?: (blockId: string) => void;
+  onEditSelect?: (blockId: string) => void;
 }) {
   return (
-    <article className={`profile-block profile-block-${block.type}`} {...getCardCommentProps(block, onCommentClick)}>
+    <article
+      className={`profile-block profile-block-${block.type}`}
+      data-editing={isEditing ? "true" : "false"}
+      {...getCardInteractionProps(block, onCommentClick, onEditSelect)}
+    >
       <div
         className="profile-block-cover"
         data-has-image={Boolean(block.imageUrl)}
@@ -107,22 +159,33 @@ function MediaBlockCard({
             원본 링크
           </a>
         ) : null}
-        <CommentCue count={commentCount} />
+        <CommentCue count={commentCount} hidden={Boolean(onEditSelect)} />
       </div>
+      {editorControls}
     </article>
   );
 }
 
-export function ProfileBlockCard({ block, commentCount, index, onCommentClick }: ProfileBlockCardProps) {
-  const commentProps = getCardCommentProps(block, onCommentClick);
+export function ProfileBlockCard({ block, commentCount, editorControls, index, isEditing, onCommentClick, onEditSelect }: ProfileBlockCardProps) {
+  const interactionProps = getCardInteractionProps(block, onCommentClick, onEditSelect);
 
   if (block.type === "album" || block.type === "movie" || block.type === "book") {
-    return <MediaBlockCard block={block} commentCount={commentCount} index={index} onCommentClick={onCommentClick} />;
+    return (
+      <MediaBlockCard
+        block={block}
+        commentCount={commentCount}
+        editorControls={editorControls}
+        index={index}
+        isEditing={isEditing}
+        onCommentClick={onCommentClick}
+        onEditSelect={onEditSelect}
+      />
+    );
   }
 
   if (block.type === "text") {
     return (
-      <article className="profile-block profile-block-text" {...commentProps}>
+      <article className="profile-block profile-block-text" data-editing={isEditing ? "true" : "false"} {...interactionProps}>
         <div className="profile-block-body">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <p className="archive-label">글 블록</p>
@@ -131,15 +194,16 @@ export function ProfileBlockCard({ block, commentCount, index, onCommentClick }:
           <h3 className="profile-block-title">{block.title}</h3>
           <p className="profile-block-longtext">{block.body}</p>
           <BlockTags tags={block.tags} />
-          <CommentCue count={commentCount} />
+          <CommentCue count={commentCount} hidden={Boolean(onEditSelect)} />
         </div>
+        {editorControls}
       </article>
     );
   }
 
   if (block.type === "link") {
     return (
-      <article className="profile-block profile-block-link-card" {...commentProps}>
+      <article className="profile-block profile-block-link-card" data-editing={isEditing ? "true" : "false"} {...interactionProps}>
         <div className="profile-block-body">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <p className="archive-label">링크 블록</p>
@@ -151,15 +215,16 @@ export function ProfileBlockCard({ block, commentCount, index, onCommentClick }:
             {block.url.replace(/^https?:\/\//, "")}
           </a>
           <BlockTags tags={block.tags} />
-          <CommentCue count={commentCount} />
+          <CommentCue count={commentCount} hidden={Boolean(onEditSelect)} />
         </div>
+        {editorControls}
       </article>
     );
   }
 
   if (block.type === "image") {
     return (
-      <article className="profile-block profile-block-image" {...commentProps}>
+      <article className="profile-block profile-block-image" data-editing={isEditing ? "true" : "false"} {...interactionProps}>
         <div className="profile-single-image">
           <img alt={block.alt} className="profile-image" src={block.imageUrl} />
         </div>
@@ -171,15 +236,16 @@ export function ProfileBlockCard({ block, commentCount, index, onCommentClick }:
           <h3 className="profile-block-title">{block.title}</h3>
           <p className="profile-block-note">{block.caption}</p>
           <BlockTags tags={block.tags} />
-          <CommentCue count={commentCount} />
+          <CommentCue count={commentCount} hidden={Boolean(onEditSelect)} />
         </div>
+        {editorControls}
       </article>
     );
   }
 
   if (block.type === "gallery") {
     return (
-      <article className="profile-block profile-block-gallery" {...commentProps}>
+      <article className="profile-block profile-block-gallery" data-editing={isEditing ? "true" : "false"} {...interactionProps}>
         <div className="profile-gallery">
           {block.images.map((image, imageIndex) => (
             <img alt={image.alt} className="profile-image" key={`${block.id}-${image.url}-${imageIndex}`} src={image.url} />
@@ -193,15 +259,16 @@ export function ProfileBlockCard({ block, commentCount, index, onCommentClick }:
           <h3 className="profile-block-title">{block.title}</h3>
           <p className="profile-block-note">{block.caption}</p>
           <BlockTags tags={block.tags} />
-          <CommentCue count={commentCount} />
+          <CommentCue count={commentCount} hidden={Boolean(onEditSelect)} />
         </div>
+        {editorControls}
       </article>
     );
   }
 
   if (block.type === "video") {
     return (
-      <article className="profile-block profile-block-video" {...commentProps}>
+      <article className="profile-block profile-block-video" data-editing={isEditing ? "true" : "false"} {...interactionProps}>
         <YouTubeEmbed title={block.title} url={block.youtubeUrl} />
         <div className="profile-block-body">
           <div className="flex flex-wrap items-start justify-between gap-3">
@@ -211,8 +278,9 @@ export function ProfileBlockCard({ block, commentCount, index, onCommentClick }:
           <h3 className="profile-block-title">{block.title}</h3>
           <p className="profile-block-note">{block.description}</p>
           <BlockTags tags={block.tags} />
-          <CommentCue count={commentCount} />
+          <CommentCue count={commentCount} hidden={Boolean(onEditSelect)} />
         </div>
+        {editorControls}
       </article>
     );
   }
@@ -221,7 +289,7 @@ export function ProfileBlockCard({ block, commentCount, index, onCommentClick }:
     const ListElement = block.ordered ? "ol" : "ul";
 
     return (
-      <article className="profile-block profile-block-list-card" {...commentProps}>
+      <article className="profile-block profile-block-list-card" data-editing={isEditing ? "true" : "false"} {...interactionProps}>
         <div className="profile-block-body">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <p className="archive-label">리스트 블록</p>
@@ -237,14 +305,15 @@ export function ProfileBlockCard({ block, commentCount, index, onCommentClick }:
             ))}
           </ListElement>
           <BlockTags tags={block.tags} />
-          <CommentCue count={commentCount} />
+          <CommentCue count={commentCount} hidden={Boolean(onEditSelect)} />
         </div>
+        {editorControls}
       </article>
     );
   }
 
   return (
-    <article className="profile-block profile-block-tags" {...commentProps}>
+    <article className="profile-block profile-block-tags" data-editing={isEditing ? "true" : "false"} {...interactionProps}>
       <div className="profile-block-body">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <p className="archive-label">태그 블록</p>
@@ -257,8 +326,9 @@ export function ProfileBlockCard({ block, commentCount, index, onCommentClick }:
             <span key={tag}>{tag}</span>
           ))}
         </div>
-        <CommentCue count={commentCount} />
+          <CommentCue count={commentCount} hidden={Boolean(onEditSelect)} />
       </div>
+      {editorControls}
     </article>
   );
 }

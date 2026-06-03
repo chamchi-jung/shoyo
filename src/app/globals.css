@@ -2143,6 +2143,21 @@ select {
     background: color-mix(in srgb, var(--profile-paper) 95%, white);
   }
 
+  .profile-block[data-editable="true"] {
+    cursor: pointer;
+  }
+
+  .profile-block[data-editable="true"]:hover,
+  .profile-block[data-editable="true"]:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--profile-accent) 78%, white);
+    outline-offset: 3px;
+  }
+
+  .profile-block[data-editing="true"] {
+    outline: 3px solid var(--profile-accent);
+    outline-offset: 4px;
+  }
+
   .profile-block-text,
   .profile-block-image,
   .profile-block-gallery,
@@ -2304,6 +2319,107 @@ select {
     align-content: start;
     gap: 1.05rem;
     padding: clamp(1rem, 2vw, 1.25rem);
+  }
+
+  .studio-inline-block-editor {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 0.75rem;
+    border-top: 1px dashed color-mix(in srgb, var(--profile-border) 55%, transparent);
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--profile-accent) 12%, var(--profile-paper)), var(--profile-paper));
+    padding: clamp(0.85rem, 2vw, 1rem);
+  }
+
+  .studio-inline-editor-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .studio-inline-editor-head strong {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 1rem;
+    font-weight: 950;
+  }
+
+  .studio-inline-editor-head > div:last-child {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .studio-inline-editor-head button {
+    border: 1px solid var(--profile-border);
+    background: var(--profile-accent);
+    color: var(--profile-paper);
+    cursor: pointer;
+    padding: 0.45rem 0.55rem;
+    font-family:
+      ui-monospace,
+      SFMono-Regular,
+      Menlo,
+      Monaco,
+      Consolas,
+      "Liberation Mono",
+      monospace;
+    font-size: 0.7rem;
+    font-weight: 950;
+    text-transform: uppercase;
+  }
+
+  .studio-inline-editor-head button:disabled {
+    cursor: not-allowed;
+    opacity: 0.42;
+  }
+
+  .studio-inline-fields {
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .studio-inline-fields label {
+    display: grid;
+    gap: 0.32rem;
+  }
+
+  .studio-inline-fields span {
+    color: var(--profile-muted);
+    font-family:
+      ui-monospace,
+      SFMono-Regular,
+      Menlo,
+      Monaco,
+      Consolas,
+      "Liberation Mono",
+      monospace;
+    font-size: 0.68rem;
+    font-weight: 950;
+    text-transform: uppercase;
+  }
+
+  .studio-inline-fields input,
+  .studio-inline-fields textarea {
+    width: 100%;
+    border: 1px solid color-mix(in srgb, var(--profile-border) 72%, transparent);
+    background: color-mix(in srgb, var(--profile-paper) 92%, white);
+    color: var(--profile-ink);
+    padding: 0.62rem 0.68rem;
+    font: inherit;
+  }
+
+  .studio-inline-fields textarea {
+    min-height: 5.5rem;
+    resize: vertical;
+  }
+
+  .studio-inline-fields input:focus,
+  .studio-inline-fields textarea:focus {
+    outline: 2px solid var(--profile-accent);
+    outline-offset: 1px;
   }
 
   .profile-block-title {
@@ -3590,6 +3706,14 @@ select {
     font-weight: 900;
     line-height: 1;
   }
+
+  .studio-preview-bar small {
+    display: block;
+    margin-top: 0.35rem;
+    color: rgba(246, 237, 216, 0.62);
+    font-size: 0.76rem;
+    line-height: 1.35;
+   }
 
   .studio-preview-bar a {
     border: 1px solid rgba(246, 237, 216, 0.28);

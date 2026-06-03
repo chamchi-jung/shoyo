@@ -1,11 +1,18 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import type { Profile } from "@/data/sampleProfiles";
+import type { ProfileBlock } from "@/data/sampleProfiles";
 import { ProfileBlockList } from "./ProfileBlockList";
 import { ProfileGuestbook } from "./ProfileGuestbook";
 import { ProfileShareCard } from "./ProfileShareCard";
 
 type ProfileShellProps = {
+  blockEditor?: {
+    selectedBlockId: string;
+    onMoveBlock: (fromIndex: number, toIndex: number) => void;
+    onSelectBlock: (blockId: string) => void;
+    onUpdateBlock: (index: number, block: ProfileBlock) => void;
+  };
   profile: Profile;
   profiles: Array<Pick<Profile, "username" | "nickname" | "theme" | "avatarUrl">>;
   preview?: boolean;
@@ -42,7 +49,7 @@ const presetLabels: Record<string, string> = {
   "old-homepage": "옛 인터넷 홈"
 };
 
-export function ProfileShell({ preview = false, profile, profiles }: ProfileShellProps) {
+export function ProfileShell({ blockEditor, preview = false, profile, profiles }: ProfileShellProps) {
   const neighborProfiles = profiles.filter((item) => item.username !== profile.username);
 
   const themeVars = {
@@ -178,7 +185,7 @@ export function ProfileShell({ preview = false, profile, profiles }: ProfileShel
               </div>
             </section>
 
-            <ProfileBlockList blocks={profile.blocks} preview={preview} username={profile.username} />
+            <ProfileBlockList blocks={profile.blocks} editor={blockEditor} preview={preview} username={profile.username} />
             <ProfileGuestbook preview={preview} profile={profile} />
             <ProfileShareCard profile={profile} />
           </div>

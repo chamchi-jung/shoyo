@@ -9,8 +9,16 @@ import { ProfileCommentForm, ProfileCommentList } from "./ProfileCommentThread";
 
 type ProfileBlockListProps = {
   blocks: ProfileBlock[];
+  editor?: ProfileBlockListEditor;
   preview?: boolean;
   username: string;
+};
+
+type ProfileBlockListEditor = {
+  selectedBlockId: string;
+  onMoveBlock: (fromIndex: number, toIndex: number) => void;
+  onSelectBlock: (blockId: string) => void;
+  onUpdateBlock: (index: number, block: ProfileBlock) => void;
 };
 
 function isMediaBlock(block: ProfileBlock): block is MediaProfileBlock {
@@ -58,7 +66,225 @@ function getBlockTitle(block: ProfileBlock) {
   return block.title ?? profileBlockTypeLabels[block.type];
 }
 
-export function ProfileBlockList({ blocks, preview = false, username }: ProfileBlockListProps) {
+function listToText(values?: string[]) {
+  return values?.join(", ") ?? "";
+}
+
+function textToList(value: string) {
+  return value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function linesToText(values?: string[]) {
+  return values?.join("\n") ?? "";
+}
+
+function textToLines(value: string) {
+  return value
+    .split(/\r?\n/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function InlineBlockFields({ block, onReplace }: { block: ProfileBlock; onReplace: (block: ProfileBlock) => void }) {
+  if (block.type === "text") {
+    return (
+      <>
+        <label>
+          <span>제목</span>
+          <input onChange={(event) => onReplace({ ...block, title: event.target.value })} value={block.title} />
+        </label>
+        <label>
+          <span>본문</span>
+          <textarea onChange={(event) => onReplace({ ...block, body: event.target.value })} rows={5} value={block.body} />
+        </label>
+        <label>
+          <span>태그</span>
+          <input onChange={(event) => onReplace({ ...block, tags: textToList(event.target.value) })} value={listToText(block.tags)} />
+        </label>
+      </>
+    );
+  }
+
+  if (block.type === "link") {
+    return (
+      <>
+        <label>
+          <span>제목</span>
+          <input onChange={(event) => onReplace({ ...block, title: event.target.value })} value={block.title} />
+        </label>
+        <label>
+          <span>링크 주소</span>
+          <input onChange={(event) => onReplace({ ...block, url: event.target.value })} value={block.url} />
+        </label>
+        <label>
+          <span>설명</span>
+          <textarea onChange={(event) => onReplace({ ...block, description: event.target.value })} rows={3} value={block.description} />
+        </label>
+        <label>
+          <span>태그</span>
+          <input onChange={(event) => onReplace({ ...block, tags: textToList(event.target.value) })} value={listToText(block.tags)} />
+        </label>
+      </>
+    );
+  }
+
+  if (block.type === "list") {
+    return (
+      <>
+        <label>
+          <span>제목</span>
+          <input onChange={(event) => onReplace({ ...block, title: event.target.value })} value={block.title} />
+        </label>
+        <label>
+          <span>항목</span>
+          <textarea onChange={(event) => onReplace({ ...block, items: textToLines(event.target.value) })} rows={5} value={linesToText(block.items)} />
+        </label>
+        <label>
+          <span>메모</span>
+          <textarea onChange={(event) => onReplace({ ...block, note: event.target.value })} rows={2} value={block.note ?? ""} />
+        </label>
+      </>
+    );
+  }
+
+  if (block.type === "album" || block.type === "movie" || block.type === "book") {
+    return (
+      <>
+        <label>
+          <span>제목</span>
+          <input onChange={(event) => onReplace({ ...block, title: event.target.value })} value={block.title} />
+        </label>
+        <label>
+          <span>제작자</span>
+          <input onChange={(event) => onReplace({ ...block, creator: event.target.value })} value={block.creator} />
+        </label>
+        <label>
+          <span>메모</span>
+          <textarea onChange={(event) => onReplace({ ...block, note: event.target.value })} rows={3} value={block.note} />
+        </label>
+        <label>
+          <span>원본 링크</span>
+          <input onChange={(event) => onReplace({ ...block, link: event.target.value })} value={block.link ?? ""} />
+        </label>
+      </>
+    );
+  }
+
+  if (block.type === "video") {
+    return (
+      <>
+        <label>
+          <span>제목</span>
+          <input onChange={(event) => onReplace({ ...block, title: event.target.value })} value={block.title} />
+        </label>
+        <label>
+          <span>유튜브 주소</span>
+          <input onChange={(event) => onReplace({ ...block, youtubeUrl: event.target.value })} value={block.youtubeUrl} />
+        </label>
+        <label>
+          <span>설명</span>
+          <textarea onChange={(event) => onReplace({ ...block, description: event.target.value })} rows={3} value={block.description} />
+        </label>
+      </>
+    );
+  }
+
+  if (block.type === "image") {
+    return (
+      <>
+        <label>
+          <span>제목</span>
+          <input onChange={(event) => onReplace({ ...block, title: event.target.value })} value={block.title} />
+        </label>
+        <label>
+          <span>이미지 주소</span>
+          <input onChange={(event) => onReplace({ ...block, imageUrl: event.target.value })} value={block.imageUrl} />
+        </label>
+        <label>
+          <span>캡션</span>
+          <textarea onChange={(event) => onReplace({ ...block, caption: event.target.value })} rows={3} value={block.caption} />
+        </label>
+      </>
+    );
+  }
+
+  if (block.type === "gallery") {
+    return (
+      <>
+        <label>
+          <span>제목</span>
+          <input onChange={(event) => onReplace({ ...block, title: event.target.value })} value={block.title} />
+        </label>
+        <label>
+          <span>캡션</span>
+          <textarea onChange={(event) => onReplace({ ...block, caption: event.target.value })} rows={3} value={block.caption} />
+        </label>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <label>
+        <span>제목</span>
+        <input onChange={(event) => onReplace({ ...block, title: event.target.value })} value={block.title} />
+      </label>
+      <label>
+        <span>태그</span>
+        <input onChange={(event) => onReplace({ ...block, tags: textToList(event.target.value) })} value={listToText(block.tags)} />
+      </label>
+      <label>
+        <span>메모</span>
+        <textarea onChange={(event) => onReplace({ ...block, note: event.target.value })} rows={2} value={block.note ?? ""} />
+      </label>
+    </>
+  );
+}
+
+function InlineBlockEditor({
+  block,
+  canMoveDown,
+  canMoveUp,
+  index,
+  onMoveBlock,
+  onReplace
+}: {
+  block: ProfileBlock;
+  canMoveDown: boolean;
+  canMoveUp: boolean;
+  index: number;
+  onMoveBlock: (fromIndex: number, toIndex: number) => void;
+  onReplace: (block: ProfileBlock) => void;
+}) {
+  return (
+    <div className="studio-inline-block-editor" onClick={(event) => event.stopPropagation()}>
+      <div className="studio-inline-editor-head">
+        <div>
+          <p className="archive-label">캔버스 편집</p>
+          <strong>
+            #{String(index + 1).padStart(2, "0")} / {profileBlockTypeLabels[block.type]}
+          </strong>
+        </div>
+        <div>
+          <button disabled={!canMoveUp} onClick={() => onMoveBlock(index, index - 1)} type="button">
+            위로
+          </button>
+          <button disabled={!canMoveDown} onClick={() => onMoveBlock(index, index + 2)} type="button">
+            아래로
+          </button>
+        </div>
+      </div>
+      <div className="studio-inline-fields">
+        <InlineBlockFields block={block} onReplace={onReplace} />
+      </div>
+    </div>
+  );
+}
+
+export function ProfileBlockList({ blocks, editor, preview = false, username }: ProfileBlockListProps) {
   const topShelfBlocks = blocks.filter(isMediaBlock).slice(0, 4);
   const [localCommentsByBlock, setLocalCommentsByBlock] = useState<Record<string, ProfileComment[]>>({});
   const [remoteCommentsByBlock, setRemoteCommentsByBlock] = useState<Record<string, ProfileComment[]>>({});
@@ -171,6 +397,11 @@ export function ProfileBlockList({ blocks, preview = false, username }: ProfileB
     }
 
     event.preventDefault();
+    if (editor) {
+      editor.onSelectBlock(block.id);
+      return;
+    }
+
     setActiveBlockId(block.id);
   }
 
@@ -192,7 +423,14 @@ export function ProfileBlockList({ blocks, preview = false, username }: ProfileB
             <article
               className="top-shelf-card"
               key={block.id}
-              onClick={() => setActiveBlockId(block.id)}
+              onClick={() => {
+                if (editor) {
+                  editor.onSelectBlock(block.id);
+                  return;
+                }
+
+                setActiveBlockId(block.id);
+              }}
               onKeyDown={(event) => handleShelfKeyDown(event, block)}
               role="button"
               style={{
@@ -205,22 +443,40 @@ export function ProfileBlockList({ blocks, preview = false, username }: ProfileB
               <span>{String(index + 1).padStart(2, "0")}</span>
               <small>{profileBlockTypeLabels[block.type]}</small>
               <strong>{block.title}</strong>
-              <em>{getBlockCommentCount(block) ? `댓글 ${getBlockCommentCount(block)}` : "댓글 열기"}</em>
+              <em>{editor ? "편집하기" : getBlockCommentCount(block) ? `댓글 ${getBlockCommentCount(block)}` : "댓글 열기"}</em>
             </article>
           ))}
         </div>
       ) : null}
 
       <div className="profile-block-grid">
-        {blocks.map((block, index) => (
-          <ProfileBlockCard
-            block={block}
-            commentCount={getBlockCommentCount(block)}
-            index={index}
-            key={block.id}
-            onCommentClick={setActiveBlockId}
-          />
-        ))}
+        {blocks.map((block, index) => {
+          const isEditing = editor?.selectedBlockId === block.id;
+
+          return (
+            <ProfileBlockCard
+              block={block}
+              commentCount={editor ? undefined : getBlockCommentCount(block)}
+              editorControls={
+                editor && isEditing ? (
+                  <InlineBlockEditor
+                    block={block}
+                    canMoveDown={index < blocks.length - 1}
+                    canMoveUp={index > 0}
+                    index={index}
+                    onMoveBlock={editor.onMoveBlock}
+                    onReplace={(nextBlock) => editor.onUpdateBlock(index, nextBlock)}
+                  />
+                ) : null
+              }
+              index={index}
+              isEditing={isEditing}
+              key={block.id}
+              onCommentClick={editor ? undefined : setActiveBlockId}
+              onEditSelect={editor?.onSelectBlock}
+            />
+          );
+        })}
       </div>
 
       {activeBlock ? (
