@@ -1,20 +1,11 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { CommunityBoard } from "@/components/community/CommunityBoard";
 
 export const metadata: Metadata = {
-  title: "shoyo 자유게시판",
-  description: "프로필과 취향 이야기를 가볍게 남기는 shoyo 자유게시판"
+  title: "커뮤니티 / 해즈세요",
+  description: "글, 댓글, 사진, 유튜브를 올릴 수 있는 단순 커뮤니티입니다."
 };
 
 export default function CommunityPage() {
-  return (
-    <>
-      <nav className="community-nav" aria-label="커뮤니티 이동">
-        <Link href="/">shoyo 홈</Link>
-        <Link href="/studio/profile">내 프로필 만들기</Link>
-      </nav>
-      <CommunityBoard />
-    </>
-  );
+  return <CommunityBoard />;
 }

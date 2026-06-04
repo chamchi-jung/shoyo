@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "shoyo",
-  description: "앨범, 영화, 책, 갤러리, 유튜브, 링크, 태그를 한 장에 쌓아두는 개인 취향 페이지입니다."
+  title: "해즈세요",
+  description: "글, 댓글, 사진, 유튜브를 올릴 수 있는 단순 커뮤니티입니다."
 };
 
 export default function RootLayout({
