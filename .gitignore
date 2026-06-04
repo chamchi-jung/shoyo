@@ -23,3 +23,5 @@ pnpm-debug.log*
 
 # local dev server logs
 .codex-dev-server*.log
+
+.vercel
